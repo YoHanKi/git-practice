@@ -1,6 +1,7 @@
 package com.example.blogtrainnig.model;
 
 import com.example.blogtrainnig.dto.ArticleResponse;
+import com.example.blogtrainnig.dto.ArticleWithCommentsResponse;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,6 +40,9 @@ public class Article {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "article")
+    private List<Comment> comments;
+
     @Builder
     public Article(String title, String content) {
         this.title = title;
@@ -52,5 +58,15 @@ public class Article {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public ArticleWithCommentsResponse toACResponse() {
+        return ArticleWithCommentsResponse.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
     }
 }
